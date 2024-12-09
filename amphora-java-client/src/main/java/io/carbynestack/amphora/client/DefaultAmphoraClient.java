@@ -18,6 +18,7 @@ import io.carbynestack.amphora.common.exceptions.IntegrityVerificationException;
 import io.carbynestack.amphora.common.paging.PageRequest;
 import io.carbynestack.amphora.common.paging.Sort;
 import io.carbynestack.httpclient.BearerTokenUtils;
+import io.carbynestack.mpspdz.integration.MpSpdzIntegrationUtils;
 import io.vavr.CheckedFunction1;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
@@ -148,8 +149,16 @@ public class DefaultAmphoraClient implements AmphoraClient {
    */
   @Override
   public UUID createSecret(Secret secret) throws AmphoraClientException {
+    ShareFamily shareFamily =
+        secret.getTags() != null
+            ? secret.getTags().stream()
+                .filter(tag -> tag.getKey().equals("ShareFamily"))
+                .findFirst()
+                .map(tag -> ShareFamily.getShareFamilyByName(tag.getValue()))
+                .orElse(ShareFamily.CowGear)
+            : ShareFamily.CowGear;
     List<OutputDeliveryObject> inputMaskOutputDeliveryObjects =
-        downloadInputMasks(secret.size(), secret.getSecretId().toString());
+        downloadInputMasks(secret.size(), secret.getSecretId().toString(), shareFamily);
     List<BigInteger> inputMasks = verifyOutputDeliveryObjects(inputMaskOutputDeliveryObjects);
     MaskedInputData[] maskedInputData = new MaskedInputData[secret.size()];
     IntStream.range(0, secret.size())
@@ -637,12 +646,13 @@ public class DefaultAmphoraClient implements AmphoraClient {
     }
   }
 
-  private List<OutputDeliveryObject> downloadInputMasks(long count, String requestId)
-      throws AmphoraClientException {
+  private List<OutputDeliveryObject> downloadInputMasks(
+      long count, String requestId, ShareFamily shareFamily) throws AmphoraClientException {
     List<NameValuePair> queryParams =
         Lists.newArrayList(
             new BasicNameValuePair(REQUEST_ID_PARAMETER, requestId),
-            new BasicNameValuePair(COUNT_PARAMETER, String.valueOf(count)));
+            new BasicNameValuePair(COUNT_PARAMETER, String.valueOf(count)),
+            new BasicNameValuePair(FAMILY_PARAMETER, shareFamily.name()));
 
     return new ArrayList<>(
         unwrap(
