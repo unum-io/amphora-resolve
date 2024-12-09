@@ -21,7 +21,7 @@ public class SecretShareConverterFactory {
 
   public SecretShareConverter createShareConverter(Optional<Tag> shareFamily) {
     return shareFamily
-        .map(tag -> createByFamily(ShareFamily.valueOf(tag.getValue().toUpperCase())))
+        .map(tag -> createByFamily(ShareFamily.valueOf(tag.getValue())))
         .orElseGet(
             () ->
                 new AdditiveSecretShareConverter(
@@ -32,10 +32,10 @@ public class SecretShareConverterFactory {
 
   private SecretShareConverter createByFamily(ShareFamily shareFamily) {
     switch (shareFamily) {
-      case HEMI:
+      case Hemi:
         return new SemiAdditiveSecretShareConverter(
             amphoraServiceProperties.getPlayerId() != 0, spdzUtil);
-      case COWGEAR:
+      case CowGear:
       default:
         return new AdditiveSecretShareConverter(
             spdzProperties.getMacKey(), amphoraServiceProperties.getPlayerId() != 0, spdzUtil);

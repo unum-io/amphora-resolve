@@ -73,7 +73,7 @@ public class OutputDeliveryService {
         secretShare
             .getTagByKey("ShareFamily")
             .map(tag -> ShareFamily.getShareFamilyByName(tag.getValue()))
-            .orElse(ShareFamily.COWGEAR);
+            .orElse(ShareFamily.CowGear);
     byte[] shareData = secretShare.getData();
     int shareLength = shareData.length / shareFamily.getShareSize();
     byte[] shareValueData = new byte[shareLength * WORD_WIDTH];

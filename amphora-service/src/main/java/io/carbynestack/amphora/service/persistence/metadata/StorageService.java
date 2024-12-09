@@ -420,6 +420,6 @@ public class StorageService {
   private ShareFamily getFamilyFromOptionalTag(Optional<Tag> familyTag) {
     return familyTag
         .map(tag -> ShareFamily.getShareFamilyByName(tag.getValue()))
-        .orElse(ShareFamily.COWGEAR);
+        .orElse(ShareFamily.CowGear);
   }
 }

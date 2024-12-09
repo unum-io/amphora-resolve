@@ -40,8 +40,7 @@ public class InputMaskShareController {
     isTrue(count > 0, TOO_LESS_INPUT_MASKS_EXCEPTION_MSG);
     return new ResponseEntity<>(
         inputMaskCachingService.getInputMasksAsOutputDeliveryObject(
-            requestId, count, ShareFamily.valueOf(shareFamily.toUpperCase()
-            )),
+            requestId, count, ShareFamily.valueOf(shareFamily)),
         HttpStatus.OK);
   }
 }

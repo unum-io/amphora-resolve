@@ -155,8 +155,8 @@ public class DefaultAmphoraClient implements AmphoraClient {
                 .filter(tag -> tag.getKey().equals("ShareFamily"))
                 .findFirst()
                 .map(tag -> ShareFamily.getShareFamilyByName(tag.getValue()))
-                .orElse(ShareFamily.COWGEAR)
-            : ShareFamily.COWGEAR;
+                .orElse(ShareFamily.CowGear)
+            : ShareFamily.CowGear;
     List<OutputDeliveryObject> inputMaskOutputDeliveryObjects =
         downloadInputMasks(secret.size(), secret.getSecretId().toString(), shareFamily);
     List<BigInteger> inputMasks = verifyOutputDeliveryObjects(inputMaskOutputDeliveryObjects);

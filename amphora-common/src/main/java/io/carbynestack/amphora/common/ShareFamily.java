@@ -8,8 +8,8 @@ import java.util.Map;
 
 @AllArgsConstructor
 public enum ShareFamily {
-  HEMI("Hemi", false, 16),
-  COWGEAR("CowGear", true, 32);
+  Hemi("Hemi", false, 16),
+  CowGear("CowGear", true, 32);
 
   private static Map<String, ShareFamily> mapping = loadMapping();
 
@@ -25,8 +25,8 @@ public enum ShareFamily {
 
   private static Map<String, ShareFamily> loadMapping() {
     Map<String, ShareFamily> mapping = new HashMap<>();
-    mapping.put(HEMI.familyName, HEMI);
-    mapping.put(COWGEAR.familyName, COWGEAR);
+    mapping.put(Hemi.familyName, Hemi);
+    mapping.put(CowGear.familyName, CowGear);
 
     return mapping;
   }
