@@ -149,8 +149,14 @@ public class DefaultAmphoraClient implements AmphoraClient {
    */
   @Override
   public UUID createSecret(Secret secret) throws AmphoraClientException {
-    ShareFamily shareFamily = secret.getTags().stream().filter(tag -> tag.getKey().equals("ShareFamily")).findFirst()
-        .map(tag -> ShareFamily.getShareFamilyByName(tag.getValue())).orElse(ShareFamily.COWGEAR);
+    ShareFamily shareFamily =
+        secret.getTags() != null
+            ? secret.getTags().stream()
+                .filter(tag -> tag.getKey().equals("ShareFamily"))
+                .findFirst()
+                .map(tag -> ShareFamily.getShareFamilyByName(tag.getValue()))
+                .orElse(ShareFamily.COWGEAR)
+            : ShareFamily.COWGEAR;
     List<OutputDeliveryObject> inputMaskOutputDeliveryObjects =
         downloadInputMasks(secret.size(), secret.getSecretId().toString(), shareFamily);
     List<BigInteger> inputMasks = verifyOutputDeliveryObjects(inputMaskOutputDeliveryObjects);
@@ -212,9 +218,7 @@ public class DefaultAmphoraClient implements AmphoraClient {
         verifiableSecretShares.stream()
             .map(VerifiableSecretShare::getOutputDeliveryObject)
             .collect(Collectors.toList());
-    outputDeliveryObjects.stream().forEach(secret -> System.out.println(secretShareUtil.getSpdzUtil().fromGfp(secret.getSecretShares())));
     List<BigInteger> secrets = verifyOutputDeliveryObjects(outputDeliveryObjects);
-    secrets.stream().forEach(object -> System.out.println(object));
     return Secret.of(
         secretId,
         verifiableSecretShares.get(0).getMetadata().getTags(),
@@ -642,8 +646,8 @@ public class DefaultAmphoraClient implements AmphoraClient {
     }
   }
 
-  private List<OutputDeliveryObject> downloadInputMasks(long count, String requestId, ShareFamily shareFamily)
-      throws AmphoraClientException {
+  private List<OutputDeliveryObject> downloadInputMasks(
+      long count, String requestId, ShareFamily shareFamily) throws AmphoraClientException {
     List<NameValuePair> queryParams =
         Lists.newArrayList(
             new BasicNameValuePair(REQUEST_ID_PARAMETER, requestId),
